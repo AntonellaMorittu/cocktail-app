@@ -4,6 +4,7 @@ import { css, html, render } from 'lit';
 const CocktailApp = () => {
   const [query, setQuery] = useState('');
   const [cocktails, setCocktails] = useState([]);
+  const [shoppingList, setShoppingList] = useState([]);
 
   const searchCocktails = async () => {
     if (query.trim()) {
@@ -16,6 +17,19 @@ const CocktailApp = () => {
         console.error('Error', error);
       }
     }
+  };
+
+  const addToShoppingList = (cocktail) => {
+    const newItems = Object.keys(cocktail)
+      // Get the ingredient names that are truthy and not already in the shopping list
+      .filter(key => key.startsWith('strIngredient') && cocktail[key])
+      // Map to ingredient names
+      .map(key => cocktail[key])
+      // Filter out existing ingredients
+      .filter(ingredient => !shoppingList.includes(ingredient));
+
+    // Update the shopping list
+    setShoppingList(prevList => [...prevList, ...newItems]);
   };
 
   const styles = css`
@@ -116,9 +130,9 @@ const CocktailApp = () => {
                 <h4>Ingredients:</h4>
                 <ul>
                   ${Object.keys(cocktail)
-                    // This checks if the value for that key in the cocktail object is truthy. This is important because some ingredient fields may be empty.
-                    .filter(key => key.startsWith('strIngredient') && cocktail[key])
-                    .map(key => html`<li>${cocktail[key]}</li>`)}
+      // This checks if the value for that key in the cocktail object is truthy. This is important because some ingredient fields may be empty.
+      .filter(key => key.startsWith('strIngredient') && cocktail[key])
+      .map(key => html`<li>${cocktail[key]}</li>`)}
                 </ul>
               </div>
               <span class="add-btn">
@@ -129,16 +143,15 @@ const CocktailApp = () => {
         </div>
 
         <div class="shopping-list">
-          <ul class="shopping-list"></ul>
+          <ul class="shopping-list">
+            ${shoppingList.map(item => html`<li>${item}</li>`)}
+          </ul>
           <button id="print-btn">Print Shopping List</button>
       </div>
     </div>  
   `;
 
-  const addToShoppingList = (cocktail) => {
-    // Implement shopping list functionality here
-    console.log('Added to shopping list:', cocktail);
-  };
+
 
   return template();
 };
