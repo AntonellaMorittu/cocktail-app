@@ -6,6 +6,8 @@ const CocktailApp = () => {
   const [cocktails, setCocktails] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
 
+
+
   const searchCocktails = async () => {
     if (query.trim()) {
       try {
@@ -30,6 +32,14 @@ const CocktailApp = () => {
 
     // Update the shopping list
     setShoppingList(prevList => [...prevList, ...newItems]);
+  };
+
+  const printShoppingList = (shoppingList) => {
+    const newWindow = window.open(""); // Open a new window
+    newWindow.alert(`
+      Here's your shopping list: ${shoppingList}
+    `);
+
   };
 
   const styles = css`
@@ -90,7 +100,7 @@ const CocktailApp = () => {
       padding: 10px;   
       align-self: end;
     }  
-    .shopping-list {
+    .list {
       width: 30%;
     } 
    
@@ -142,16 +152,18 @@ const CocktailApp = () => {
           `)}
         </div>
 
-        <div class="shopping-list">
-          <ul class="shopping-list">
+        <div class="list">
+        <ul id="shopping-list" class="shopping-list">
             ${shoppingList.map(item => html`<li>${item}</li>`)}
           </ul>
-          <button id="print-btn">Print Shopping List</button>
+          
+          ${shoppingList.length > 0
+      ? html`<button @click=${() => printShoppingList(shoppingList)} class="btn">Print Shopping List</button>`
+      : ""}
+
       </div>
     </div>  
   `;
-
-
 
   return template();
 };
