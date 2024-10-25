@@ -1,22 +1,30 @@
-import { component, useState } from 'haunted';
+import { component, useEffect, useState } from 'haunted';
 import { css, html, render } from 'lit';
 
 const CocktailApp = () => {
   const [query, setQuery] = useState('');
   const [cocktails, setCocktails] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
-
+  const [toasterMessage, setToasterMessage] = useState('');
 
 
   const searchCocktails = async () => {
+    setToasterMessage("Searching...");
+
+    await new Promise(resolve => setTimeout(resolve, 500)); // 500 ms delay
+
     if (query.trim()) {
       try {
         const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${query}`);
         const data = await response.json();
         setCocktails(data.drinks || []);
-        console.log("Cocktails", data.drinks);
+
+        if (data.drinks && data.drinks.length === 0) {
+          setToasterMessage("No results found.");
+        }
       } catch (error) {
         console.error('Error', error);
+        setToasterMessage("Error fetching results."); // Handle error
       }
     }
   };
@@ -32,15 +40,29 @@ const CocktailApp = () => {
 
     // Update the shopping list
     setShoppingList(prevList => [...prevList, ...newItems]);
+    setToasterMessage("Ingredients added to shopping list.");
   };
 
   const printShoppingList = (shoppingList) => {
-    const newWindow = window.open(""); // Open a new window
-    newWindow.alert(`
+    const newWindow = window.open("");
+    newWindow.document.write(`
       Here's your shopping list: ${shoppingList}
     `);
 
+    newWindow.document.close();
+    newWindow.print();
+
   };
+
+  useEffect(() => {
+    if (toasterMessage) {
+      const timer = setTimeout(() => {
+        setToasterMessage('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [toasterMessage]);
 
   const styles = css`
     .wrapper {
@@ -102,8 +124,20 @@ const CocktailApp = () => {
     }  
     .list {
       width: 30%;
+      height: fit-content;
+      border: 1px solid lightgrey;
+      border-radius: 4px;
+      padding: 10px;
     } 
-   
+    .toaster {
+      height: auto;
+      width: fit-content;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      color: black;
+      border: 1px grey solid;
+  } 
   `;
 
   // UI Template
@@ -123,12 +157,10 @@ const CocktailApp = () => {
         />
         <button @click=${searchCocktails} class="btn">Search</button>
       </div>
-
+      <div class="toaster">${toasterMessage}</div>
       <!-- Content -->
-       <div class="results-container">
-       
+       <div class="results-container">    
         <div class="cocktails">
-     
           ${cocktails.map(cocktail => html`
             <div class="cocktail-item">
               <div class="cocktail-image">
@@ -152,16 +184,22 @@ const CocktailApp = () => {
           `)}
         </div>
 
-        <div class="list">
-        <ul id="shopping-list" class="shopping-list">
-            ${shoppingList.map(item => html`<li>${item}</li>`)}
-          </ul>
-          
-          ${shoppingList.length > 0
-      ? html`<button @click=${() => printShoppingList(shoppingList)} class="btn">Print Shopping List</button>`
+   
+        ${cocktails.length > 0
+      ? html`
+           <div class="list">
+            <h3>Shopping List</h3>
+            <ul id="shopping-list" class="shopping-list">
+              ${shoppingList.map(item => html`<li>${item}</li>`)}
+            </ul>
+            ${shoppingList.length > 0
+          ? html`<button @click=${() => printShoppingList(shoppingList)} class="btn">Print</button>`
+          : ""}
+          `
       : ""}
-
-      </div>
+          
+          
+        </div>
     </div>  
   `;
 
