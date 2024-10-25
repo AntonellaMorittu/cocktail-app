@@ -37,3 +37,8 @@ A simple web application built with [Vite](https://vite.dev/guide/) that helps y
     ```bash
       npm start
       ```
+
+
+## Deployed App
+
+The app is deployed and accessible at the following URL: [Cocktail Assistant](https://cocktail-assistant.netlify.app/)
