@@ -13,6 +13,6 @@
   },
   "dependencies": {
     "haunted": "^5.0.0",
-    "lit-html": "^3.2.1"
+    "lit": "^2.8.0"
   }
 }
