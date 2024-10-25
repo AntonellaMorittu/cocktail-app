@@ -27,6 +27,7 @@ A simple web application built with [Vite](https://vite.dev/guide/) that helps y
    ```
 
 2. Navigate to the project repository
+
     ```bash
     cd cocktail-app
     ```
