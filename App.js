@@ -22,7 +22,7 @@ const CocktailApp = () => {
         setCocktails(data.drinks || [])
 
         if (data.drinks && data.drinks.length > 0) {
-          setToasterMessage("Here are the result!")
+          setToasterMessage("Here are the results!")
         } else {
           setToasterMessage("No results found.")
         }
