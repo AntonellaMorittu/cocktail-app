@@ -23,7 +23,7 @@ A simple web application built with [Vite](https://vite.dev/guide/) that helps y
 1. Clone this repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/AntonellaMorittu/cocktail-app.git
    ```
 
 2. Navigate to the project repository
